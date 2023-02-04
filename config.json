@@ -1,6 +1,6 @@
 {
-	"ip":"achlys.aternos.me",
-	"port": 15167,
-	"name": "achlys",
+	"ip":"adns.aternos.me",
+	"port": 28017,
+	"name": "adns",
 	"auto-night-skip":"false"
 }

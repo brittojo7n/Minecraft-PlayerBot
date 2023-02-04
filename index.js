@@ -41,7 +41,7 @@ function bindEvents(bot) {
 
   bot.once('login', () => {
     console.log("Trying to login")
-    bot.chat('/login achlys_050721')
+    bot.chat('/login adns_050721')
     console.log("Logged In")
   });
 
