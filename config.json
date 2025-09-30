@@ -1,5 +1,5 @@
 {
-	"ip":"adns.aternos.me",
+	"ip": "example.server.xyz",
 	"port": 28017,
 	"name": "adns",
 	"auto-night-skip":"false"
