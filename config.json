@@ -1,6 +1,6 @@
 {
 	"ip": "example.server.xyz",
-	"port": 28017,
+	"port": 12345,
 	"name": "adns",
 	"auto-night-skip":"false"
 }
