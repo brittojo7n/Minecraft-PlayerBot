@@ -1,5 +1,7 @@
 {
-  "server_ip": "NewMinecraftia.aternos.me",
-  "server_port": 25565,
-  "username": "adns"
+	"ip": "example.server.xyz",
+	"port": 25565,
+	"name": "adns",
+	"auto-night-skip":"false",
+	"password": "adns@1234"
 }

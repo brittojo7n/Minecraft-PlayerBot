@@ -1,53 +1,100 @@
-const mineflayer = require('mineflayer');
+const mineflayer = require('mineflayer')
 const fs = require('fs');
 
-const config = JSON.parse(fs.readFileSync('config.json'));
+// Note: We removed the 'server' and './lib/antiafk' require statements as they are not needed.
 
-const options = {
-  host: config.server_ip,
-  port: config.server_port || 25565,
-  username: config.username,
-  auth: 'offline',
-  version: '1.20.1'
+let rawdata = fs.readFileSync('config.json');
+let data = JSON.parse(rawdata);
+let isLoggedIn = false;
+
+var host = data["ip"];
+var username = data["name"]
+var password = data["password"] // Reads the password from config
+var nightskip = data["auto-night-skip"]
+
+var options = {
+  host: host,
+  port: data["port"],
+  username: username,
+  auth: 'offline' // Required for cracked servers
 };
 
-function createBot() {
-  console.log(`Connecting to ${options.host} as ${options.username}...`);
-  const bot = mineflayer.createBot(options);
+var bot = mineflayer.createBot(options);
+
+function bindEvents(bot) {
 
   bot.once('spawn', () => {
-    console.log('Bot has joined the server!');
-    startAntiAFK(bot);
+    console.log("Bot has connected. Waiting for AuthMe prompts...");
   });
 
-  bot.on('kicked', (reason) => {
-    console.error('Bot was kicked from the server. Reason:', reason);
-    reconnect();
+  bot.on('messagestr', (message) => {
+    if (isLoggedIn) return; // Don't process messages if already logged in
+
+    console.log(`[SERVER]: ${message}`);
+    const lowerMessage = message.toLowerCase();
+
+    // AuthMe Reloaded Logic
+    if (lowerMessage.includes('/register')) {
+      console.log('Registering with password...');
+      bot.chat(`/register ${password} ${password}`);
+    } else if (lowerMessage.includes('/login')) {
+      console.log('Logging in with password...');
+      bot.chat(`/login ${password}`);
+    }
+
+    // Check for successful login message
+    if (lowerMessage.includes('logged in') || lowerMessage.includes('authenticated')) {
+      console.log('Authentication successful! Starting AFK routine.');
+      isLoggedIn = true;
+      // You can add your anti-AFK logic here if needed, for example:
+      // setInterval(() => bot.swingArm(), 5000);
+    }
   });
 
-  bot.on('end', (reason) => {
-    console.warn('Bot has been disconnected. Reason:', reason);
-    reconnect();
+
+  bot.on('time', function(time) {
+    if (nightskip == "true") {
+      if (bot.time.timeOfDay >= 13000) {
+        bot.chat('/time set day')
+      }
+    }
   });
 
-  bot.on('error', (err) => {
-    console.error('An error occurred:', err.message);
+  bot.on('death', function() {
+    bot.emit("respawn")
+    setTimeout(backondeath, 1200);
+  });
+
+  bot.on('kicked', function(reason) {
+    console.log("Kicked for ", reason);
+    isLoggedIn = false;
+    setTimeout(relog, 30000);
+  });
+
+  bot.on('error', function(err) {
+    console.log('Error attempting to reconnect: ' + err.errno + '.');
+    if (err.code == undefined) {
+      console.log('Invalid credentials OR bot needs to wait because it relogged too quickly.');
+      console.log('Will retry to connect in 30 seconds. ');
+      setTimeout(relog, 30000);
+    }
+  });
+
+  bot.on('end', function() {
+    console.log("Bot has ended");
+    isLoggedIn = false;
+    setTimeout(relog, 30000);
   });
 }
 
-function startAntiAFK(bot) {
-    console.log('Starting Anti-AFK module...');
-    setInterval(() => {
-        bot.swingArm('left');
-        bot.setControlState('jump', true);
-        bot.setControlState('jump', false);
-    }, 15000); 
+function backondeath() {
+  bot.chat('/back')
 }
 
-function reconnect() {
-  const delay = 30000;
-  console.log(`Attempting to reconnect in ${delay / 1000} seconds...`);
-  setTimeout(createBot, delay);
+function relog() {
+  console.log("Attempting to reconnect...");
+  bot = mineflayer.createBot(options);
+  bindEvents(bot);
 }
 
-createBot();
+bindEvents(bot)
