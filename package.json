@@ -1,17 +1,12 @@
 {
-  "name": "afkbot",
+  "name": "minecraft-playerbot",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Beastifi3d",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "config": "^3.3.3",
-    "fs": "0.0.1-security",
-    "mineflayer": "^2.37.1",
-    "mineflayer-cmd": "^1.1.3"
-  }
+  "description": ""
 }
