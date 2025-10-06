@@ -1,7 +1,6 @@
 const vec3 = require('vec3');
 
 function initMovementEnhancements(bot) {
-  // Always-on swimming enhancement
   bot.on('physicsTick', () => {
     if (bot.entity.isInWater) {
       bot.setControlState('jump', true);
@@ -10,11 +9,9 @@ function initMovementEnhancements(bot) {
 
   console.log('Advanced movement enhancements are active.');
 
-  // --- Start of Corrected Stuck Detection Logic ---
   let lastPosition = null;
   let stuckCounter = 0;
   
-  // Check every 2 seconds to see if the bot is stuck
   setInterval(() => {
     if (bot.pathfinder.isMoving() && lastPosition) {
       if (bot.entity.position.distanceTo(lastPosition) < 0.1) {
@@ -23,15 +20,14 @@ function initMovementEnhancements(bot) {
         stuckCounter = 0;
       }
 
-      if (stuckCounter > 2) { // If stuck for ~4 seconds
+      if (stuckCounter > 2) {
         console.log("Bot appears to be stuck. Attempting to escape.");
         attemptToEscape(bot);
-        stuckCounter = 0; // Reset counter after attempting escape
+        stuckCounter = 0;
       }
     }
     lastPosition = bot.entity.position.clone();
   }, 2000);
-  // --- End of Corrected Stuck Detection Logic ---
 }
 
 async function attemptToEscape(bot) {
@@ -47,16 +43,18 @@ async function attemptToEscape(bot) {
     await bot.equip(blockInInventory, 'hand');
     bot.setControlState('jump', true);
 
-    // This is a more precise way to place the block at the top of the jump
     const placeBlockOnApex = () => {
-        // When the bot's upward velocity is close to zero, it's at the peak of its jump
       if (bot.entity.velocity.y < 0.1 && bot.entity.velocity.y > -0.1) {
-        bot.removeListener('physicsTick', placeBlockOnApex); // Important to prevent multiple placements
+        bot.removeListener('physicsTick', placeBlockOnApex);
         
         const referenceBlock = bot.blockAt(bot.entity.position.offset(0, -1, 0));
-        bot.placeBlock(referenceBlock, vec3(0, 1, 0));
         
-        // Short delay before stopping the jump to ensure the block is placed
+        bot.placeBlock(referenceBlock, vec3(0, 1, 0)).catch(err => {
+          if (!err.message.includes('did not fire within timeout')) {
+            console.log(err)
+          }
+        });
+        
         setTimeout(() => {
             bot.setControlState('jump', false);
             console.log(`Placed a ${blockInInventory.name} to escape.`);

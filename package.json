@@ -1,12 +1,12 @@
 {
-  "name": "afkbot",
+  "name": "minecraft-playerbot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Beastifi3d",
+  "author": "Britto",
   "license": "ISC",
   "dependencies": {
     "mineflayer": "^4.20.1",

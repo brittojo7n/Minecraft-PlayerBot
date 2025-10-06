@@ -27,7 +27,6 @@ function createAndBindBot() {
     const defaultMove = new Movements(bot, mcData);
     bot.pathfinder.setMovements(defaultMove);
 
-    // Initialize movement enhancements without config
     initMovementEnhancements(bot);
 
     if (data.login_required === false) {
