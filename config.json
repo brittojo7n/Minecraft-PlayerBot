@@ -1,7 +1,7 @@
 {
-	"ip": "example.server.xyz",
+	"ip": "britto.aternos.me",
 	"port": 25565,
 	"name": "adns",
-	"auto-night-skip":"false",
-	"password": "adns@1234"
+	"password": "adns@1234",
+	"login_required": false
 }

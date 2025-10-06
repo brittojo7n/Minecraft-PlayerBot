@@ -1,12 +1,16 @@
 {
-  "name": "minecraft-playerbot",
+  "name": "afkbot",
   "version": "1.0.0",
-  "description": "A simple AFK bot for cracked Minecraft servers.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "author": "Beastifi3d",
+  "license": "ISC",
   "dependencies": {
-    "mineflayer": "^4.20.1"
+    "mineflayer": "^4.20.1",
+    "mineflayer-pathfinder": "^2.4.5",
+    "vec3": "^0.1.10"
   }
 }
