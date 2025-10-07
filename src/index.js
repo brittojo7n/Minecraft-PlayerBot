@@ -2,7 +2,7 @@ const mineflayer = require('mineflayer');
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder');
 const vec3 = require('vec3');
 const fs = require('fs');
-const { initMovementEnhancements } = require('./movement_enhancements');
+const { initMovementEnhancements } = require('./movement');
 
 let rawdata = fs.readFileSync('config.json');
 let data = JSON.parse(rawdata);
