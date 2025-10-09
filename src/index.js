@@ -1,8 +1,8 @@
 const mineflayer = require('mineflayer');
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder');
-const vec3 = require('vec3');
 const fs = require('fs');
-const { initMovementEnhancements } = require('./movement');
+const { initMovementEnhancements } = require('./modules/movement');
+const { startFishing } = require('./modules/fishing');
 
 let rawdata = fs.readFileSync('config.json');
 let data = JSON.parse(rawdata);
@@ -26,6 +26,7 @@ function createAndBindBot() {
     const mcData = require('minecraft-data')(bot.version);
     const defaultMove = new Movements(bot, mcData);
     bot.pathfinder.setMovements(defaultMove);
+    bot.mcData = mcData;
 
     initMovementEnhancements(bot);
 
@@ -78,6 +79,9 @@ function createAndBindBot() {
       bot.chat(`Moving to X: ${x}, Z: ${z}`);
       const goal = new GoalNear(x, bot.entity.position.y, z, 1);
       bot.pathfinder.setGoal(goal);
+    } else if (command === 'fish') {
+        console.log('Received fish command.');
+        startFishing(bot);
     }
   });
 
