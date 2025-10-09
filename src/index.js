@@ -71,7 +71,6 @@ function createAndBindBot() {
     const command = args.shift().toLowerCase();
 
     if (command === 'goto') {
-      // stopAllTasks(bot, true); // This line was incorrect and has been removed.
       const [x, z] = args.map(Number);
       if (args.length !== 2 || isNaN(x) || isNaN(z)) {
         bot.chat(`Invalid command. Use: b!goto <x> <z>`);
