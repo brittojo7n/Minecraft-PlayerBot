@@ -2,7 +2,9 @@ const mineflayer = require('mineflayer');
 const { pathfinder, Movements, goals: { GoalNear } } = require('mineflayer-pathfinder');
 const fs = require('fs');
 const { initMovementEnhancements } = require('./modules/movement');
-const { startFishing } = require('./modules/fishing');
+const { toggleFishing } = require('./modules/fishing');
+const { dumpFish } = require('./modules/inventory');
+const { stopAllTasks } = require('./modules/tasks');
 
 let rawdata = fs.readFileSync('config.json');
 let data = JSON.parse(rawdata);
@@ -69,6 +71,7 @@ function createAndBindBot() {
     const command = args.shift().toLowerCase();
 
     if (command === 'goto') {
+      // stopAllTasks(bot, true); // This line was incorrect and has been removed.
       const [x, z] = args.map(Number);
       if (args.length !== 2 || isNaN(x) || isNaN(z)) {
         bot.chat(`Invalid command. Use: b!goto <x> <z>`);
@@ -79,9 +82,17 @@ function createAndBindBot() {
       bot.chat(`Moving to X: ${x}, Z: ${z}`);
       const goal = new GoalNear(x, bot.entity.position.y, z, 1);
       bot.pathfinder.setGoal(goal);
-    } else if (command === 'fish') {
-        console.log('Received fish command.');
-        startFishing(bot);
+    } else if (command === 'fishing') {
+        stopAllTasks(bot, true); 
+        console.log('Received fishing toggle command.');
+        toggleFishing(bot);
+    } else if (command === 'dump' && args[0] === 'fish') {
+        stopAllTasks(bot, true); 
+        console.log('Received dump fish command.');
+        dumpFish(bot);
+    } else if (command === 'stop') {
+        console.log('Received stop command.');
+        stopAllTasks(bot, false);
     }
   });
 
@@ -103,3 +114,4 @@ function createAndBindBot() {
 }
 
 createAndBindBot();
+
